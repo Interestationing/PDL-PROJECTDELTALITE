@@ -1,0 +1,701 @@
+--[[ SafeObf v2.2.0 Protected ]]
+
+local _0xABCDF = {
+    Enabled = true,
+    Boxes = true,
+    Skeleton = true,
+    Names = true,
+    Distances = true,
+    NightVision = false,
+    InventoryHUD = true,
+    MaxDistance = 500,
+    BoxColor = Color3.fromRGB(255, 0, 0),
+    VisibleColor = Color3.fromRGB(255, 255, 0),
+    SkeletonColor = Color3.fromRGB(255, 255, 255),
+    NameColor = Color3.fromRGB(255, 255, 255),
+    DistanceColor = Color3.fromRGB(0, 255, 255),
+    InvisibleDetectColor = Color3.fromRGB(255, 0, 255),
+    MenuKey = Enum.KeyCode.K,
+    NVKey = Enum.KeyCode.B, 
+    InvenKey = Enum.KeyCode.U,
+    FOVRadius = 150
+}
+
+local _0xABCE0 = game:GetService("\80\108\97\121\101\114\115")
+local _0xABCE1 = game:GetService("\76\105\103\104\116\105\110\103")
+local _0xABCE2 = game:GetService("\82\101\112\108\105\99\97\116\101\100\83\116\111\114\97\103\101")
+local _0xABCE3 = game:GetService("\83\116\97\114\116\101\114\71\117\105")
+local _0xABCE4 = _0xABCE0.LocalPlayer
+local _0xABCE5 = workspace.CurrentCamera or workspace:WaitForChild("\67\97\109\101\114\97")
+local _0xABCE6 = game:GetService("\85\115\101\114\73\110\112\117\116\83\101\114\118\105\99\101")
+local _0xABCE7 = game:GetService("\67\111\114\101\71\117\105")
+local _0xABCE8 = game:GetService("\82\117\110\83\101\114\118\105\99\101")
+
+local _0xABCE9 = {}
+local _0xABCEA = RaycastParams.new()
+_0xABCEA.FilterType = Enum.RaycastFilterType.Exclude
+
+local _0xABCEB = {
+    Ambient = _0xABCE1.Ambient,
+    OutdoorAmbient = _0xABCE1.OutdoorAmbient,
+    Brightness = _0xABCE1.Brightness,
+    GlobalShadows = _0xABCE1.GlobalShadows
+}
+
+local _0xABCEC = {
+    {"\72\101\97\100", "\85\112\112\101\114\84\111\114\115\111"}, {"\85\112\112\101\114\84\111\114\115\111", "\76\111\119\101\114\84\111\114\115\111"},
+    {"\85\112\112\101\114\84\111\114\115\111", "\76\101\102\116\85\112\112\101\114\65\114\109"}, {"\76\101\102\116\85\112\112\101\114\65\114\109", "\76\101\102\116\76\111\119\101\114\65\114\109"}, {"\76\101\102\116\76\111\119\101\114\65\114\109", "\76\101\102\116\72\97\110\100"},
+    {"\85\112\112\101\114\84\111\114\115\111", "\82\105\103\104\116\85\112\112\101\114\65\114\109"}, {"\82\105\103\104\116\85\112\112\101\114\65\114\109", "\82\105\103\104\116\76\111\119\101\114\65\114\109"}, {"\82\105\103\104\116\76\111\119\101\114\65\114\109", "\82\105\103\104\116\72\97\110\100"},
+    {"\76\111\119\101\114\84\111\114\115\111", "\76\101\102\116\85\112\112\101\114\76\101\103"}, {"\76\101\102\116\85\112\112\101\114\76\101\103", "\76\101\102\116\76\111\119\101\114\76\101\103"}, {"\76\101\102\116\76\111\119\101\114\76\101\103", "\76\101\102\116\70\111\111\116"},
+    {"\76\111\119\101\114\84\111\114\115\111", "\82\105\103\104\116\85\112\112\101\114\76\101\103"}, {"\82\105\103\104\116\85\112\112\101\114\76\101\103", "\82\105\103\104\116\76\111\119\101\114\76\101\103"}, {"\82\105\103\104\116\76\111\119\101\114\76\101\103", "\82\105\103\104\116\70\111\111\116"},
+    {"\84\111\114\115\111", "\72\101\97\100"}, {"\84\111\114\115\111", "\76\101\102\116\32\65\114\109"}, {"\84\111\114\115\111", "\82\105\103\104\116\32\65\114\109"}, {"\84\111\114\115\111", "\76\101\102\116\32\76\101\103"}, {"\84\111\114\115\111", "\82\105\103\104\116\32\76\101\103"}
+}
+
+local _0xABCED = {
+    "\72\101\97\100", "\84\111\114\115\111", "\76\101\102\116\32\65\114\109", "\82\105\103\104\116\32\65\114\109", "\76\101\102\116\32\76\101\103", "\82\105\103\104\116\32\76\101\103",
+    "\85\112\112\101\114\84\111\114\115\111", "\76\111\119\101\114\84\111\114\115\111", "\76\101\102\116\85\112\112\101\114\65\114\109", "\76\101\102\116\76\111\119\101\114\65\114\109", "\76\101\102\116\72\97\110\100",
+    "\82\105\103\104\116\85\112\112\101\114\65\114\109", "\82\105\103\104\116\76\111\119\101\114\65\114\109", "\82\105\103\104\116\72\97\110\100", "\76\101\102\116\85\112\112\101\114\76\101\103", "\76\101\102\116\76\111\119\101\114\76\101\103",
+    "\76\101\102\116\70\111\111\116", "\82\105\103\104\116\85\112\112\101\114\76\101\103", "\82\105\103\104\116\76\111\119\101\114\76\101\103", "\82\105\103\104\116\70\111\111\116"
+}
+
+local function _0xABD61(p1, p2)
+    return math.round((p1 - p2).Magnitude / 3.33)
+end
+
+
+local _0xABCEE = Drawing.new("\67\105\114\99\108\101")
+_0xABCEE.Thickness = 1
+_0xABCEE.NumSides = 60
+_0xABCEE.Radius = _0xABCDF.FOVRadius
+_0xABCEE.Filled = false
+_0xABCEE.Transparency = 0.6
+_0xABCEE.Color = Color3.fromRGB(0, 255, 255)
+_0xABCEE.Visible = true
+
+
+local _0xABCEF = Instance.new("\83\99\114\101\101\110\71\117\105")
+_0xABCEF.Name = "\78\86\71\95\79\118\101\114\108\97\121\95\66\97\99\107\117\112"
+_0xABCEF.DisplayOrder = 999999
+_0xABCEF.ResetOnSpawn = false
+_0xABCEF.Parent = _0xABCE5
+
+local _0xABCF0 = Instance.new("\70\114\97\109\101")
+_0xABCF0.Size = UDim2.new(1, 0, 1, 0)
+_0xABCF0.BackgroundColor3 = Color3.fromRGB(0, 255, 50)
+_0xABCF0.BackgroundTransparency = 0.85
+_0xABCF0.BorderSizePixel = 0
+_0xABCF0.Visible = false
+_0xABCF0.Parent = _0xABCEF
+
+
+local _0xABCF1 = Instance.new("\83\99\114\101\101\110\71\117\105")
+_0xABCF1.Name = "\73\110\118\101\110\116\111\114\121\95\83\105\100\101\98\97\114\95\72\85\68"
+_0xABCF1.DisplayOrder = 999997
+_0xABCF1.ResetOnSpawn = false
+pcall(function() _0xABCF1.Parent = _0xABCE7 end)
+if not _0xABCF1.Parent then _0xABCF1.Parent = _0xABCE4:WaitForChild("\80\108\97\121\101\114\71\117\105") end
+
+local _0xABCF2 = Instance.new("\70\114\97\109\101")
+_0xABCF2.Size = UDim2.new(0, 320, 0, 560)
+_0xABCF2.Position = UDim2.new(1, -330, 0.15, 0)
+_0xABCF2.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+_0xABCF2.BackgroundTransparency = 0.15
+_0xABCF2.BorderSizePixel = 0
+_0xABCF2.Visible = _0xABCDF.InventoryHUD
+_0xABCF2.Parent = _0xABCF1
+
+local _0xABCF3 = Instance.new("\85\73\67\111\114\110\101\114")
+_0xABCF3.CornerRadius = UDim.new(0, 6)
+_0xABCF3.Parent = _0xABCF2
+
+local _0xABCF4 = Instance.new("\84\101\120\116\76\97\98\101\108")
+_0xABCF4.Size = UDim2.new(1, 0, 0, 30)
+_0xABCF4.BackgroundTransparency = 1
+_0xABCF4.Text = "\84\97\114\103\101\116\32\84\114\97\99\107\105\110\103\32\72\85\68\32\40\85\41"
+_0xABCF4.TextColor3 = Color3.fromRGB(255, 215, 0)
+_0xABCF4.TextSize = 14
+_0xABCF4.Font = Enum.Font.SourceSansBold
+_0xABCF4.Parent = _0xABCF2
+
+local _0xABCF5 = Instance.new("\84\101\120\116\76\97\98\101\108")
+_0xABCF5.Size = UDim2.new(0.94, 0, 0, 20)
+_0xABCF5.Position = UDim2.new(0.03, 0, 0.05, 0)
+_0xABCF5.BackgroundTransparency = 1
+_0xABCF5.Text = "\84\97\114\103\101\116\58\32\78\111\110\101\32\40\76\111\111\107\47\65\105\109\32\97\116\32\97\32\112\108\97\121\101\114\41"
+_0xABCF5.TextColor3 = Color3.fromRGB(0, 255, 255)
+_0xABCF5.TextSize = 13
+_0xABCF5.TextXAlignment = Enum.TextXAlignment.Left
+_0xABCF5.Font = Enum.Font.SourceSansBold
+_0xABCF5.Parent = _0xABCF2
+
+local _0xABCF6 = Instance.new("\84\101\120\116\76\97\98\101\108")
+_0xABCF6.Size = UDim2.new(0.94, 0, 0, 18)
+_0xABCF6.Position = UDim2.new(0.03, 0, 0.09, 0)
+_0xABCF6.BackgroundTransparency = 1
+_0xABCF6.Text = "\226\148\128\226\148\128\32\67\85\82\82\69\78\84\76\89\32\69\81\85\73\80\80\69\68\32\73\78\32\72\65\78\68\83\32\226\148\128\226\148\128"
+_0xABCF6.TextColor3 = Color3.fromRGB(255, 120, 0)
+_0xABCF6.TextSize = 11
+_0xABCF6.Font = Enum.Font.SourceSansBold
+_0xABCF6.Parent = _0xABCF2
+
+local _0xABCF7 = Instance.new("\84\101\120\116\76\97\98\101\108")
+_0xABCF7.Size = UDim2.new(0.94, 0, 0, 26)
+_0xABCF7.Position = UDim2.new(0.03, 0, 0.12, 0)
+_0xABCF7.BackgroundColor3 = Color3.fromRGB(35, 30, 25)
+_0xABCF7.Text = "\78\111\116\104\105\110\103\32\69\113\117\105\112\112\101\100\32\47\32\70\105\115\116\115"
+_0xABCF7.TextColor3 = Color3.fromRGB(150, 150, 150)
+_0xABCF7.TextSize = 14
+_0xABCF7.Font = Enum.Font.SourceSansItalic
+_0xABCF7.Parent = _0xABCF2
+
+local _0xABCF8 = Instance.new("\85\73\67\111\114\110\101\114")
+_0xABCF8.CornerRadius = UDim.new(0, 4)
+_0xABCF8.Parent = _0xABCF7
+
+local _0xABCF9 = Instance.new("\84\101\120\116\76\97\98\101\108")
+_0xABCF9.Size = UDim2.new(0.94, 0, 0, 18)
+_0xABCF9.Position = UDim2.new(0.03, 0, 0.18, 0)
+_0xABCF9.BackgroundTransparency = 1
+_0xABCF9.Text = "\226\148\128\226\148\128\32\66\65\67\75\80\65\67\75\32\73\78\86\69\78\84\79\82\89\32\83\84\79\82\65\71\69\32\226\148\128\226\148\128"
+_0xABCF9.TextColor3 = Color3.fromRGB(180, 180, 180)
+_0xABCF9.TextSize = 11
+_0xABCF9.Font = Enum.Font.SourceSansBold
+_0xABCF9.Parent = _0xABCF2
+
+local _0xABCFA = Instance.new("\83\99\114\111\108\108\105\110\103\70\114\97\109\101")
+_0xABCFA.Size = UDim2.new(0.94, 0, 0.76, 0)
+_0xABCFA.Position = UDim2.new(0.03, 0, 0.22, 0)
+_0xABCFA.BackgroundTransparency = 1
+_0xABCFA.BorderSizePixel = 0
+_0xABCFA.CanvasSize = UDim2.new(0, 0, 0, 0)
+_0xABCFA.ScrollBarThickness = 5
+_0xABCFA.Parent = _0xABCF2
+
+local _0xABCFB = Instance.new("\85\73\76\105\115\116\76\97\121\111\117\116")
+_0xABCFB.SortOrder = Enum.SortOrder.LayoutOrder
+_0xABCFB.Padding = UDim.new(0, 4)
+_0xABCFB.Parent = _0xABCFA
+
+_0xABCFB:GetPropertyChangedSignal("\65\98\115\111\108\117\116\101\67\111\110\116\101\110\116\83\105\122\101"):Connect(function()
+    _0xABCFA.CanvasSize = UDim2.new(0, 0, 0, _0xABCFB.AbsoluteContentSize.Y + 15)
+end)
+
+local function _0xABD62()
+    _0xABCDF.NightVision = not _0xABCDF.NightVision
+    _0xABCF0.Visible = _0xABCDF.NightVision
+    if not _0xABCDF.NightVision then
+        _0xABCE1.Ambient = _0xABCEB.Ambient
+        _0xABCE1.OutdoorAmbient = _0xABCEB.OutdoorAmbient
+        _0xABCE1.Brightness = _0xABCEB.Brightness
+        _0xABCE1.GlobalShadows = _0xABCEB.GlobalShadows
+    end
+    return _0xABCDF.NightVision
+end
+
+_0xABCE8.Heartbeat:Connect(function()
+    if _0xABCDF.NightVision then
+        _0xABCE1.Ambient = Color3.fromRGB(180, 255, 180)
+        _0xABCE1.OutdoorAmbient = Color3.fromRGB(180, 255, 180)
+        _0xABCE1.Brightness = 4
+        _0xABCE1.GlobalShadows = false
+    end
+end)
+
+local function _0xABD63(character, targetPart)
+    if not character or not targetPart then return false end
+    _0xABCEA.FilterDescendantsInstances = {_0xABCE4.Character, character}
+    local _0xABCFC = _0xABCE5.CFrame.Position
+    local _0xABCFD = workspace:Raycast(_0xABCFC, targetPart.Position - _0xABCFC, _0xABCEA)
+    return _0xABCFD == nil
+end
+
+local function _0xABD64(character)
+    if not character:IsDescendantOf(workspace) then return true end
+    local _0xABCFE, _0xABCFF = 0, 0
+    for i = 1, #_0xABCED do
+        local _0xABD00 = character:FindFirstChild(_0xABCED[i])
+        if _0xABD00 and _0xABD00:IsA("\66\97\115\101\80\97\114\116") then
+            _0xABCFE = _0xABCFE + 1
+            if _0xABD00.Transparency >= 0.90 then _0xABCFF = _0xABCFF + 1 end
+        end
+    end
+    if _0xABCFE > 0 then return _0xABCFF == _0xABCFE end
+    return false
+end
+
+
+local function _0xABD65(player)
+    local _0xABD01 = { IsFlagged = false, Tag = "", Color = Color3.fromRGB(255,255,255), KDR = 0 }
+    
+    local _0xABD02 = _0xABCE2:FindFirstChild("\80\108\97\121\101\114\115")
+    if not _0xABD02 then return _0xABD01 end
+    
+    local _0xABD03 = _0xABD02:FindFirstChild(player.Name)
+    if not _0xABD03 then return _0xABD01 end
+    
+    local _0xABD04 = _0xABD03:FindFirstChild("\83\116\97\116\117\115")
+    if not _0xABD04 then return _0xABD01 end
+    
+    local _0xABD05 = _0xABD04:FindFirstChild("\74\111\117\114\110\101\121")
+    if not _0xABD05 then return _0xABD01 end
+    
+    local _0xABD06 = _0xABD05:FindFirstChild("\83\116\97\116\105\115\116\105\99\115")
+    if not _0xABD06 then return _0xABD01 end
+    
+    local _0xABD07 = _0xABD06:GetAttribute("\75\95\80\86\80") or 0
+    local _0xABD08 = _0xABD06:GetAttribute("\68\95\80\86\80") or 0
+    
+    local _0xABD09 = tonumber(_0xABD07) or 0
+    local _0xABD0A = tonumber(_0xABD08) or 0
+    
+    if _0xABD0A == 0 then
+        _0xABD01.KDR = _0xABD09
+    else
+        _0xABD01.KDR = math.round((_0xABD09 / _0xABD0A) * 100) / 100
+    end
+    
+    if _0xABD01.KDR >= 5 then
+        _0xABD01.IsFlagged = true
+        _0xABD01.Tag = string.format("\91\67\72\69\65\84\69\82\32\45\32\75\68\82\58\32\37\115\93", tostring(_0xABD01.KDR))
+        _0xABD01.Color = Color3.fromRGB(255, 0, 0)
+    elseif _0xABD01.KDR >= 3 then
+        _0xABD01.IsFlagged = true
+        _0xABD01.Tag = string.format("\91\77\79\83\84\76\89\32\76\73\75\69\76\89\32\67\72\69\65\84\69\82\32\45\32\75\68\82\58\32\37\115\93", tostring(_0xABD01.KDR))
+        _0xABD01.Color = Color3.fromRGB(255, 140, 0)
+    end
+    
+    return _0xABD01
+end
+
+local _0xABD0B = {}
+local function _0xABD66(player)
+    if player == _0xABCE4 then return end
+    if _0xABD0B[player] then return end
+    
+    task.spawn(function()
+        task.wait(1.5)
+        local _0xABD01 = _0xABD65(player)
+        if _0xABD01.IsFlagged then
+            _0xABD0B[player] = true
+            pcall(function()
+                _0xABCE3:SetCore("\83\101\110\100\78\111\116\105\102\105\99\97\116\105\111\110", {
+                    _0xABD58 = "\226\154\160\239\184\143\32\87\97\114\110\105\110\103\58\32\70\108\97\103\103\101\100\32\80\108\97\121\101\114",
+                    Text = string.format("\37\115\32\106\111\105\110\101\100\32\119\105\116\104\32\97\32\80\118\80\32\75\68\82\32\111\102\32\37\115", player.Name, tostring(_0xABD01.KDR)),
+                    Duration = 8
+                })
+                local _0xABD0C = Instance.new("\83\111\117\110\100", workspace)
+                _0xABD0C.SoundId = "\114\98\120\97\115\115\101\116\105\100\58\47\47\52\53\57\48\54\53\51\55\54\50"
+                _0xABD0C.Volume = 1
+                _0xABD0C:Play()
+                game:GetService("\68\101\98\114\105\115"):AddItem(_0xABD0C, 2)
+            end)
+        end
+    end)
+end
+
+_0xABCE0.PlayerAdded:Connect(_0xABD66)
+for _, p in ipairs(_0xABCE0:GetPlayers()) do _0xABD66(p) end
+
+local function _0xABD67(player)
+    local _0xABD0D = {
+        EquippedText = "\78\111\116\104\105\110\103\32\69\113\117\105\112\112\101\100\32\47\32\70\105\115\116\115",
+        IsEquippedActive = false,
+        BackpackItems = {}
+    }
+    
+    local _0xABD0E, _0xABD0F = pcall(function()
+        local _0xABD02 = _0xABCE2:FindFirstChild("\80\108\97\121\101\114\115")
+        if not _0xABD02 then return end
+        
+        local _0xABD03 = _0xABD02:FindFirstChild(player.Name)
+        if not _0xABD03 then return end
+        
+        local _0xABD10 = _0xABD03:FindFirstChild("\73\110\118\101\110\116\111\114\121")
+        if not _0xABD10 then return end
+        
+        local _0xABD11 = nil
+        local _0xABD04 = _0xABD03:FindFirstChild("\83\116\97\116\117\115")
+        if _0xABD04 then
+            local _0xABD12 = _0xABD04:FindFirstChild("\71\97\109\101\112\108\97\121\86\97\114\105\97\98\108\101\115")
+            if _0xABD12 then _0xABD11 = _0xABD12:FindFirstChild("\69\113\117\105\112\112\101\100\84\111\111\108") end
+        end
+        
+        local _0xABD13 = _0xABD11 and _0xABD11.Value or nil
+        
+        local _0xABD14 = _0xABD10:GetChildren()
+        for _, item in ipairs(_0xABD14) do
+            local _0xABD15 = 0
+            local _0xABD16 = {}
+            local _0xABD17 = false
+            
+            local _0xABD18 = item:FindFirstChild("\65\116\116\97\99\104\109\101\110\116\115")
+            if _0xABD18 then
+                for _, attachment in ipairs(_0xABD18:GetChildren()) do
+                    if string.find(string.lower(attachment.Name), "\109\97\103") then
+                        local _0xABD19 = attachment:FindFirstChild("\76\111\97\100\101\100\65\109\109\111")
+                        if _0xABD19 then
+                            for _, slotFolder in ipairs(_0xABD19:GetChildren()) do
+                                local _0xABD1A = slotFolder:GetAttribute("\65\109\111\117\110\116")
+                                local _0xABD1B = slotFolder:GetAttribute("\65\109\109\111\84\121\112\101")
+                                if _0xABD1A then
+                                    _0xABD15 = _0xABD15 + tonumber(_0xABD1A)
+                                    _0xABD17 = true
+                                end
+                                if _0xABD1B and not table.find(_0xABD16, tostring(_0xABD1B)) then
+                                    table.insert(_0xABD16, tostring(_0xABD1B))
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+            
+            local _0xABD1C = ""
+            if _0xABD17 then
+                local _0xABD1D = math.ceil(_0xABD15)
+                local _0xABD1E = #_0xABD16 > 0 and table.concat(_0xABD16, "\47") or "\85\110\107\110\111\119\110"
+                _0xABD1C = string.format("\32\91\37\115\93\32\40\37\115\41", tostring(_0xABD1D), _0xABD1E)
+            else
+                local _0xABD1F = item:GetAttribute("\65\109\111\117\110\116") or item:GetAttribute("\65\109\109\111")
+                local _0xABD20 = item:GetAttribute("\65\109\109\111\84\121\112\101") or item:GetAttribute("\84\121\112\101")
+                if _0xABD1F or _0xABD20 then
+                    local _0xABD21 = tonumber(_0xABD1F) and math.ceil(tonumber(_0xABD1F)) or _0xABD1F or "\48"
+                    _0xABD1C = string.format("\32\91\37\115\93\32\40\37\115\41", tostring(_0xABD21), tostring(_0xABD20 or "\66\97\115\101"))
+                end
+            end
+            
+            local _0xABD22 = tostring(item.Name) .. _0xABD1C
+            
+            if _0xABD13 and item == _0xABD13 then
+                _0xABD0D.EquippedText = "\194\187\32" .. _0xABD22
+                _0xABD0D.IsEquippedActive = true
+            else
+                table.insert(_0xABD0D.BackpackItems, "\226\128\162\32" .. _0xABD22)
+            end
+        end
+        
+        if #_0xABD0D.BackpackItems == 0 then
+            table.insert(_0xABD0D.BackpackItems, "\226\128\162\32\66\97\99\107\112\97\99\107\32\108\97\121\111\117\116\32\101\109\112\116\121")
+        end
+    end)
+    
+    return _0xABD0D
+end
+
+local function _0xABD68()
+    local _0xABD23 = nil
+    local _0xABD24 = _0xABCDF.FOVRadius
+    local _0xABD25 = _0xABCE6:GetMouseLocation()
+
+    for _, player in ipairs(_0xABCE0:GetPlayers()) do
+        if player ~= _0xABCE4 and player.Character then
+            local _0xABD26 = player.Character:FindFirstChild("\72\117\109\97\110\111\105\100\82\111\111\116\80\97\114\116")
+            local _0xABD27 = player.Character:FindFirstChildOfClass("\72\117\109\97\110\111\105\100")
+            if _0xABD26 and _0xABD27 and _0xABD27.Health > 0 then
+                local _0xABD28, _0xABD29 = _0xABCE5:WorldToViewportPoint(_0xABD26.Position)
+                if _0xABD29 then
+                    local _0xABD2A = (Vector2.new(_0xABD28.X, _0xABD28.Y) - _0xABD25).Magnitude
+                    if _0xABD2A < _0xABD24 then
+                        _0xABD24 = _0xABD2A
+                        _0xABD23 = player
+                    end
+                end
+            end
+        end
+    end
+    return _0xABD23
+end
+
+local function _0xABD69(player)
+    if _0xABCE9[player] then return end
+    
+    local _0xABD2B = {}
+    for i = 1, 4 do
+        local _0xABD2C = Drawing.new("\76\105\110\101")
+        _0xABD2C.Thickness = 1.5; _0xABD2C.Visible = false
+        table.insert(_0xABD2B, _0xABD2C)
+    end
+    
+    local _0xABD2D = {}
+    for i = 1, 15 do
+        local _0xABD2E = Drawing.new("\76\105\110\101")
+        _0xABD2E.Thickness = 1; _0xABD2E.Visible = false
+        table.insert(_0xABD2D, _0xABD2E)
+    end
+
+    local _0xABD2F = Drawing.new("\84\101\120\116")
+    _0xABD2F.Size = 14; _0xABD2F.Center = true; _0xABD2F.Outline = true; _0xABD2F.Visible = false
+    
+    local _0xABD30 = Drawing.new("\84\101\120\116")
+    _0xABD30.Size = 13; _0xABD30.Center = true; _0xABD30.Outline = true; _0xABD30.Visible = false
+
+    _0xABCE9[player] = {Lines = _0xABD2B, Bones = _0xABD2D, Name = _0xABD2F, Distance = _0xABD30}
+end
+
+local function _0xABD6A(player)
+    if _0xABCE9[player] then
+        for _, _0xABD2C in ipairs(_0xABCE9[player].Lines) do _0xABD2C:Remove() end
+        for _, _0xABD2E in ipairs(_0xABCE9[player].Bones) do _0xABD2E:Remove() end
+        _0xABCE9[player].Name:Remove()
+        _0xABCE9[player].Distance:Remove()
+        _0xABCE9[player] = nil
+        _0xABD0B[player] = nil
+    end
+end
+
+for _, p in pairs(_0xABCE0:GetPlayers()) do if p ~= _0xABCE4 then _0xABD69(p) end end
+_0xABCE0.PlayerAdded:Connect(_0xABD69)
+_0xABCE0.PlayerRemoving:Connect(_0xABD6A)
+
+local function _0xABD6B()
+    for _, child in ipairs(_0xABCFA:GetChildren()) do
+        if child:IsA("\84\101\120\116\76\97\98\101\108") then child:Destroy() end
+    end
+end
+
+local _0xABD31 = nil
+local _0xABD32 = 0
+
+_0xABCE8.RenderStepped:Connect(function()
+    local _0xABD33 = _0xABCE6:GetMouseLocation()
+    _0xABCEE.Position = _0xABD33
+    _0xABCEE.Visible = _0xABCDF.InventoryHUD
+    
+    local _0xABD34 = nil
+    if _0xABCDF.InventoryHUD then
+        _0xABD34 = _0xABD68()
+        if _0xABD34 and _0xABD34.Character then
+            local _0xABD26 = _0xABD34.Character:FindFirstChild("\72\117\109\97\110\111\105\100\82\111\111\116\80\97\114\116")
+            local _0xABD35 = _0xABD26 and _0xABD61(_0xABCE5.CFrame.Position, _0xABD26.Position) or 0
+            
+            local _0xABD36 = _0xABD65(_0xABD34)
+            if _0xABD36.IsFlagged then
+                _0xABCF5.Text = string.format("\84\97\114\103\101\116\58\32\37\115\32\91\37\115\109\93\32\75\68\82\58\32\37\115\32\226\154\160\239\184\143", _0xABD34.Name, tostring(_0xABD35), tostring(_0xABD36.KDR))
+                _0xABCF5.TextColor3 = _0xABD36.Color
+            else
+                _0xABCF5.Text = string.format("\84\97\114\103\101\116\58\32\37\115\32\91\37\115\109\93\32\75\68\82\58\32\37\115", _0xABD34.Name, tostring(_0xABD35), tostring(_0xABD36.KDR))
+                _0xABCF5.TextColor3 = Color3.fromRGB(0, 255, 255)
+            end
+            
+            if _0xABD34 ~= _0xABD31 or (os.clock() - _0xABD32) > 0.25 then
+                _0xABD31 = _0xABD34
+                _0xABD32 = os.clock()
+                _0xABD6B()
+                
+                local _0xABD37 = _0xABD67(_0xABD34)
+                _0xABCF7.Text = _0xABD37.EquippedText
+                if _0xABD37.IsEquippedActive then
+                    _0xABCF7.TextColor3 = Color3.fromRGB(46, 204, 113)
+                    _0xABCF7.BackgroundColor3 = Color3.fromRGB(30, 45, 35)
+                    _0xABCF7.Font = Enum.Font.SourceSansBold
+                else
+                    _0xABCF7.TextColor3 = Color3.fromRGB(150, 150, 150)
+                    _0xABCF7.BackgroundColor3 = Color3.fromRGB(35, 30, 25)
+                    _0xABCF7.Font = Enum.Font.SourceSansItalic
+                end
+                
+                for _, itemText in ipairs(_0xABD37.BackpackItems) do
+                    local _0xABD38 = Instance.new("\84\101\120\116\76\97\98\101\108")
+                    _0xABD38.Size = UDim2.new(1, 0, 0, 22)
+                    _0xABD38.BackgroundTransparency = 1
+                    _0xABD38.Text = itemText
+                    _0xABD38.TextColor3 = Color3.fromRGB(230, 230, 230)
+                    _0xABD38.Font = Enum.Font.SourceSans
+                    _0xABD38.TextSize = 13
+                    _0xABD38.TextXAlignment = Enum.TextXAlignment.Left
+                    _0xABD38.Parent = _0xABCFA
+                end
+            end
+        else
+            if _0xABD31 ~= nil then
+                _0xABD31 = nil
+                _0xABD6B()
+                _0xABCF7.Text = "\78\111\116\104\105\110\103\32\69\113\117\105\112\112\101\100\32\47\32\70\105\115\116\115"
+                _0xABCF7.TextColor3 = Color3.fromRGB(150, 150, 150)
+                _0xABCF7.BackgroundColor3 = Color3.fromRGB(35, 30, 25)
+                _0xABCF7.Font = Enum.Font.SourceSansItalic
+            end
+            _0xABCF5.Text = "\84\97\114\103\101\116\58\32\78\111\110\101\32\40\76\111\111\107\47\65\105\109\32\97\116\32\97\32\112\108\97\121\101\114\41"
+            _0xABCF5.TextColor3 = Color3.fromRGB(0, 255, 255)
+        end
+    end
+    
+    for player, esp in pairs(_0xABCE9) do
+        local _0xABD39 = player.Character
+        local _0xABD26 = _0xABD39 and _0xABD39:FindFirstChild("\72\117\109\97\110\111\105\100\82\111\111\116\80\97\114\116")
+        local _0xABD27 = _0xABD39 and _0xABD39:FindFirstChildOfClass("\72\117\109\97\110\111\105\100")
+        local _0xABD3A = _0xABD39 and _0xABD39:FindFirstChild("\72\101\97\100")
+
+        if _0xABCDF.Enabled and _0xABD26 and _0xABD3A and _0xABD27 and _0xABD27.Health > 0 then
+            local _0xABD3B = _0xABD61(_0xABCE5.CFrame.Position, _0xABD26.Position)
+            local _0xABD3C, _0xABD3D = _0xABCE5:WorldToViewportPoint(_0xABD26.Position)
+
+            if _0xABD3D and _0xABD3B <= _0xABCDF.MaxDistance then
+                local _0xABD3E = _0xABD63(_0xABD39, _0xABD3A)
+                local _0xABD3F = _0xABD64(_0xABD39)
+                local _0xABD40 = _0xABD65(player)
+                
+                
+                local _0xABD41 = _0xABD3E and _0xABCDF.VisibleColor or _0xABCDF.BoxColor
+
+                if _0xABCDF.Boxes then
+                    local _0xABD42 = _0xABCE5:WorldToViewportPoint(_0xABD3A.Position + Vector3.new(0, 0.5, 0))
+                    local _0xABD43 = _0xABCE5:WorldToViewportPoint(_0xABD26.Position - Vector3.new(0, 3, 0))
+                    local _0xABD44 = math.abs(_0xABD42.Y - _0xABD43.Y)
+                    local _0xABD45 = _0xABD44 / 2
+                    local _0xABD46, _0xABD47 = _0xABD3C.X - _0xABD45 / 2, _0xABD42.Y
+                    local _0xABD48, _0xABD49 = _0xABD3C.X + _0xABD45 / 2, _0xABD43.Y
+
+                    local _0xABD4A = esp.Lines
+                    _0xABD4A[1].From = Vector2.new(_0xABD46, _0xABD47); _0xABD4A[1].To = Vector2.new(_0xABD48, _0xABD47)
+                    _0xABD4A[2].From = Vector2.new(_0xABD46, _0xABD49); _0xABD4A[2].To = Vector2.new(_0xABD48, _0xABD49)
+                    _0xABD4A[3].From = Vector2.new(_0xABD46, _0xABD47); _0xABD4A[3].To = Vector2.new(_0xABD46, _0xABD49)
+                    _0xABD4A[4].From = Vector2.new(_0xABD48, _0xABD47); _0xABD4A[4].To = Vector2.new(_0xABD48, _0xABD49)
+
+                    for idx = 1, 4 do
+                        _0xABD4A[idx].Color = _0xABD41
+                        _0xABD4A[idx].Visible = true
+                    end
+                else for _, _0xABD2C in ipairs(esp.Lines) do _0xABD2C.Visible = false end end
+
+                if _0xABCDF.Skeleton then
+                    local _0xABD4B = 1
+                    for _, pair in ipairs(_0xABCEC) do
+                        local _0xABD4C, _0xABD4D = _0xABD39:FindFirstChild(pair[1]), _0xABD39:FindFirstChild(pair[2])
+                        if _0xABD4C and _0xABD4D then
+                            local _0xABD4E, _0xABD4F = _0xABCE5:WorldToViewportPoint(_0xABD4C.Position)
+                            local _0xABD50, _0xABD51 = _0xABCE5:WorldToViewportPoint(_0xABD4D.Position)
+                            if _0xABD4F and _0xABD51 and esp.Bones[_0xABD4B] then
+                                local _0xABD2E = esp.Bones[_0xABD4B]
+                                _0xABD2E.From = Vector2.new(_0xABD4E.X, _0xABD4E.Y)
+                                _0xABD2E.To = Vector2.new(_0xABD50.X, _0xABD50.Y)
+                                
+                                _0xABD2E.Color = _0xABD40.IsFlagged and _0xABD40.Color or _0xABCDF.SkeletonColor
+                                _0xABD2E.Visible = true
+                                _0xABD4B = _0xABD4B + 1
+                            end
+                        end
+                    end
+                    for i = _0xABD4B, #esp.Bones do esp.Bones[i].Visible = false end
+                else for _, _0xABD2E in ipairs(esp.Bones) do _0xABD2E.Visible = false end end
+
+                local _0xABD52 = _0xABCE5:WorldToViewportPoint(_0xABD3A.Position + Vector3.new(0, 2, 0))
+                if _0xABCDF.Names then
+                    local _0xABD53 = player.Name
+                    if _0xABD40.IsFlagged then
+                        _0xABD53 = _0xABD40.Tag .. "\32" .. _0xABD53
+                        esp.Name.Color = _0xABD40.Color
+                    elseif _0xABD3F then
+                        _0xABD53 = "\91\73\78\86\73\83\73\66\76\69\93\32" .. _0xABD53
+                        esp.Name.Color = _0xABCDF.InvisibleDetectColor
+                    else
+                        esp.Name.Color = _0xABCDF.NameColor
+                    end
+                    esp.Name.Text = _0xABD53
+                    esp.Name.Position = Vector2.new(_0xABD52.X, _0xABD52.Y)
+                    esp.Name.Visible = true
+                else esp.Name.Visible = false end
+
+                if _0xABCDF.Distances then
+                    local _0xABD54 = _0xABCE5:WorldToViewportPoint(_0xABD26.Position - Vector3.new(0, 3.5, 0))
+                    esp.Distance.Text = tostring(_0xABD3B) .. "\109"
+                    esp.Distance.Position = Vector2.new(_0xABD54.X, _0xABD54.Y)
+                    esp.Distance.Color = _0xABCDF.DistanceColor
+                    esp.Distance.Visible = true
+                else esp.Distance.Visible = false end
+            else
+                for _, _0xABD2C in ipairs(esp.Lines) do _0xABD2C.Visible = false end
+                for _, _0xABD2E in ipairs(esp.Bones) do _0xABD2E.Visible = false end
+                esp.Name.Visible = false; esp.Distance.Visible = false
+            end
+        else
+            for _, _0xABD2C in ipairs(esp.Lines) do _0xABD2C.Visible = false end
+            for _, _0xABD2E in ipairs(esp.Bones) do _0xABD2E.Visible = false end
+            esp.Name.Visible = false; esp.Distance.Visible = false
+        end
+    end
+end)
+
+
+local _0xABD55 = Instance.new("\83\99\114\101\101\110\71\117\105")
+_0xABD55.Name = "\79\118\101\114\104\101\97\100\69\83\80\72\117\98"
+_0xABD55.ResetOnSpawn = false
+_0xABD55.DisplayOrder = 999999
+pcall(function() _0xABD55.Parent = _0xABCE7 end)
+if not _0xABD55.Parent then _0xABD55.Parent = _0xABCE4:WaitForChild("\80\108\97\121\101\114\71\117\105") end
+
+local _0xABD56 = Instance.new("\70\114\97\109\101")
+_0xABD56.Size = UDim2.new(0, 250, 0, 420)
+_0xABD56.Position = UDim2.new(0.5, -125, 0.4, -210)
+_0xABD56.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+_0xABD56.BorderSizePixel = 0
+_0xABD56.Active = true; _0xABD56.Draggable = true; _0xABD56.Visible = false
+_0xABD56.Parent = _0xABD55
+
+local _0xABD57 = Instance.new("\85\73\67\111\114\110\101\114")
+_0xABD57.CornerRadius = UDim.new(0, 8)
+_0xABD57.Parent = _0xABD56
+
+local _0xABD58 = Instance.new("\84\101\120\116\76\97\98\101\108")
+_0xABD58.Size = UDim2.new(1, 0, 0, 40)
+_0xABD58.BackgroundTransparency = 1; _0xABD58.Text = "\69\83\80\32\67\117\115\116\111\109\105\122\101\114\32\40\75\41"; _0xABD58.TextColor3 = Color3.fromRGB(255, 255, 255)
+_0xABD58.TextSize = 16; _0xABD58.Font = Enum.Font.SourceSansBold; _0xABD58.Parent = _0xABD56
+
+local function _0xABD6C(name, layoutOrder, configValue, callback)
+    local _0xABD59 = Instance.new("\84\101\120\116\66\117\116\116\111\110")
+    _0xABD59.Size = UDim2.new(0.9, 0, 0, 35)
+    _0xABD59.Position = UDim2.new(0.05, 0, 0, 40 + (layoutOrder * 42))
+    _0xABD59.BackgroundColor3 = configValue and Color3.fromRGB(46, 204, 113) or Color3.fromRGB(192, 57, 43)
+    _0xABD59.Text = name .. "\58\32" .. (configValue and "\79\78" or "\79\70\70")
+    _0xABD59.TextColor3 = Color3.fromRGB(255, 255, 255); _0xABD59.Font = Enum.Font.SourceSans; _0xABD59.TextSize = 14
+    _0xABD59.Parent = _0xABD56
+    
+    local _0xABD5A = Instance.new("\85\73\67\111\114\110\101\114")
+    _0xABD5A.CornerRadius = UDim.new(0, 4); _0xABD5A.Parent = _0xABD59
+
+    _0xABD59.MouseButton1Click:Connect(function()
+        local _0xABD5B = callback()
+        _0xABD59.BackgroundColor3 = _0xABD5B and Color3.fromRGB(46, 204, 113) or Color3.fromRGB(192, 57, 43)
+        _0xABD59.Text = name .. "\58\32" .. (_0xABD5B and "\79\78" or "\79\70\70")
+    end)
+    return _0xABD59
+end
+
+_0xABD6C("\77\97\115\116\101\114\32\69\83\80", 0, _0xABCDF.Enabled, function() _0xABCDF.Enabled = not _0xABCDF.Enabled return _0xABCDF.Enabled end)
+_0xABD6C("\82\105\103\105\100\32\50\68\32\66\111\120\101\115", 1, _0xABCDF.Boxes, function() _0xABCDF.Boxes = not _0xABCDF.Boxes return _0xABCDF.Boxes end)
+_0xABD6C("\83\107\101\108\101\116\111\110\32\87\105\114\101\102\114\97\109\101", 2, _0xABCDF.Skeleton, function() _0xABCDF.Skeleton = not _0xABCDF.Skeleton return _0xABCDF.Skeleton end)
+_0xABD6C("\78\97\109\101\115", 3, _0xABCDF.Names, function() _0xABCDF.Names = not _0xABCDF.Names return _0xABCDF.Names end)
+_0xABD6C("\68\105\115\116\97\110\99\101\115", 4, _0xABCDF.Distances, function() _0xABCDF.Distances = not _0xABCDF.Distances return _0xABCDF.Distances end)
+
+local _0xABD5C = _0xABD6C("\73\110\118\101\110\116\111\114\121\32\72\85\68\32\40\85\41", 5, _0xABCDF.InventoryHUD, function()
+    _0xABCDF.InventoryHUD = not _0xABCDF.InventoryHUD
+    _0xABCF2.Visible = _0xABCDF.InventoryHUD
+    return _0xABCDF.InventoryHUD
+end)
+
+local _0xABD5D = _0xABD6C("\78\105\103\104\116\32\86\105\115\105\111\110\32\40\66\41", 6, _0xABCDF.NightVision, function()
+    return _0xABD62()
+end)
+
+_0xABD6C("\67\121\99\108\101\32\79\99\99\108\117\100\101\100\32\67\111\108\111\114", 7, true, function()
+    local _0xABD5E = {Color3.fromRGB(255, 0, 0), Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 0, 255), Color3.fromRGB(255, 255, 0)}
+    local _0xABD5F = 1
+    for i, col in ipairs(_0xABD5E) do if _0xABCDF.BoxColor == col then _0xABD5F = i break end end
+    _0xABCDF.BoxColor = _0xABD5E[(_0xABD5F % #_0xABD5E) + 1]
+    return true
+end)
+
+_0xABCE6.InputBegan:Connect(function(input, gameProcessed)
+    if input.KeyCode == _0xABCDF.MenuKey then
+        _0xABD56.Visible = not _0xABD56.Visible
+    elseif input.KeyCode == _0xABCDF.NVKey then
+        local _0xABD60 = _0xABD62()
+        _0xABD5D.BackgroundColor3 = _0xABD60 and Color3.fromRGB(46, 204, 113) or Color3.fromRGB(192, 57, 43)
+        _0xABD5D.Text = "\78\105\103\104\116\32\86\105\115\105\111\110\32\40\66\41\58\32" .. (_0xABD60 and "\79\78" or "\79\70\70")
+    elseif input.KeyCode == _0xABCDF.InvenKey then
+        _0xABCDF.InventoryHUD = not _0xABCDF.InventoryHUD
+        _0xABCF2.Visible = _0xABCDF.InventoryHUD
+        _0xABD5C.BackgroundColor3 = _0xABCDF.InventoryHUD and Color3.fromRGB(46, 204, 113) or Color3.fromRGB(192, 57, 43)
+        _0xABD5C.Text = "\73\110\118\101\110\116\111\114\121\32\72\85\68\32\40\85\41\58\32" .. (_0xABCDF.InventoryHUD and "\79\78" or "\79\70\70")
+    end
+end)
